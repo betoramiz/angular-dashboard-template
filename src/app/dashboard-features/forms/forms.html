@@ -1,4 +1,27 @@
 <page-content>
   <page-header>Encabezado</page-header>
-  <page-body>Contenido</page-body>
+  <page-body>
+    <section class="space-y-4">
+      <header class="text-xl">Simple Form</header>
+      <div>
+        Este formulario maneja un tipado simple, menos verbose, coninferencia automatica de Typescript. <br>
+        Deja que le componente maneje toda la logica del formulario y retorna un Form Value Type
+        El submit del form retorma una respuesta que esta tipada en la interfaz
+      </div>
+      <div class="code">
+        <code>
+          export interface FormValueType &#123;
+          name: string;
+          email: string;
+          &#125;
+        </code>
+      </div>
+      <simple-form (onSubmit)="onSubmitSimpleForm($event)"></simple-form>
+      <code>
+        @if (backendDto()) {
+          {{ backendDto() | json }}
+        }
+      </code>
+    </section>
+  </page-body>
 </page-content>
