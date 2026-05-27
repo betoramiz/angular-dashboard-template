@@ -6,12 +6,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 div.code {
   margin: 20px 0 25px 0;
+  width: 50%;
 
-  code {
-    background-color: #f4f4f4; /* Light grey background */
-    color: #d63384; /* Common pinkish color for code */
-    padding: 12px 14px; /* Internal spacing */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 90%; /* Slightly smaller than surrounding text */
+  pre {
+    background-color: #282c34; /* Dark theme background */
+    color: #abb2bf; /* Light grey text */
+    /*padding: 15px;*/
+    border-radius: 8px;
+    overflow-x: auto; /* Adds scrollbar for long lines */
+    line-height: 1.5; /* Better readability */
+  }
+
+  pre code {
+    background-color: transparent; /* Remove inline background if nested */
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
   }
 }

@@ -1,4 +1,4 @@
-﻿import { BackendDto, FormValueType } from './form-models';
+﻿import { BackendDto, FormValueControls, FormValueType } from './form-models';
 
 const toBackendDto = (formValue: FormValueType): BackendDto => {
   return {
@@ -7,6 +7,14 @@ const toBackendDto = (formValue: FormValueType): BackendDto => {
   }
 }
 
+const toFormValueTypes = (formValueControl: FormValueControls): FormValueType => {
+  return {
+    name: formValueControl.name.value,
+    email: formValueControl.email.value,
+  }
+}
+
 export {
-  toBackendDto
+  toBackendDto,
+  toFormValueTypes,
 }

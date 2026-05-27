@@ -24,4 +24,8 @@ export default class Forms {
   protected onSubmitSimpleForm(data: FormValueType): void {
     this.backendDto.set(toBackendDto(data));
   }
+
+  protected onSubmitVerboseForm(data: FormValueType): void {
+    this.backendDto.set(toBackendDto(data));
+  }
 }

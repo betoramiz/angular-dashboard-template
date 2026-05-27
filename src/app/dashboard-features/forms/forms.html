@@ -1,22 +1,51 @@
 <page-content>
-  <page-header>Encabezado</page-header>
+  <page-header>Forms</page-header>
   <page-body>
     <section class="space-y-4">
       <header class="text-xl">Simple Form</header>
       <div>
-        Este formulario maneja un tipado simple, menos verbose, coninferencia automatica de Typescript. <br>
+        Este formulario maneja un tipado simple, menos verbose, con inferencia automatica de Typescript. <br>
         Deja que le componente maneje toda la logica del formulario y retorna un Form Value Type
         El submit del form retorma una respuesta que esta tipada en la interfaz
       </div>
       <div class="code">
-        <code>
-          export interface FormValueType &#123;
-          name: string;
-          email: string;
-          &#125;
-        </code>
+        <pre>
+          <code>
+            export interface FormValueType &#123;
+              name: string;
+              email: string;
+            &#125;
+          </code>
+        </pre>
       </div>
+
       <simple-form (onSubmit)="onSubmitSimpleForm($event)"></simple-form>
+      <code>
+        @if (backendDto()) {
+          {{ backendDto() | json }}
+        }
+      </code>
+    </section>
+
+    <section class="space-y-4 mt-8">
+      <header class="text-xl">Verbose Form</header>
+      <div>
+        Este formulario maneja un tipado mas estricto. Implementa una interfaz para los FormControls. <br>
+        Deja que le componente maneje toda la logica del formulario y retorna un Form Value Type <br>
+        El submit del form retorma una respuesta que esta tipada en la interfaz
+      </div>
+      <div class="code">
+        <pre>
+          <code>
+            export interface FormValueType &#123;
+              name: FormControl< string >;
+              email: FormControl< string >;
+            &#125;
+          </code>
+        </pre>
+      </div>
+
+      <simple-form (onSubmit)="onSubmitVerboseForm($event)"></simple-form>
       <code>
         @if (backendDto()) {
           {{ backendDto() | json }}
