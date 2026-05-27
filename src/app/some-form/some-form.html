@@ -1,0 +1,8 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <mat-label>Your Name</mat-label>
+    <input matInput placeholder="Favorite food" formControlName="name">
+  </mat-form-field>
+  <button matButton type="submit" (click)="onCancel()">Cancel</button>
+  <button matButton="filled" type="submit">Submit</button>
+</form>

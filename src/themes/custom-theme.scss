@@ -5,16 +5,14 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@use 'colors.css';
 
 html {
-  @include mat.theme((
-    color: (
-      primary: mat.$cyan-palette,
-      tertiary: mat.$orange-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+  @include mat.theme(
+      (
+        typography: Roboto
+      )
+  );
 
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
@@ -27,4 +25,17 @@ html {
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
+}
+
+
+.side-nav-flat {
+  @include mat.sidenav-overrides((
+    container-width: 250px,
+    container-shape: square,
+  ));
+
+  header {
+    background-color:  var(--mat-sys-on-secondary-container);
+  }
+
 }

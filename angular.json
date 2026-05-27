@@ -19,10 +19,12 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets"
             ],
             "styles": [
-              "src/custom-theme.scss",
+              "src/themes/colors.css",
+              "src/themes/custom-theme.scss",
               "src/styles.css"
             ]
           },
