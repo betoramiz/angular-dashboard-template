@@ -50,7 +50,10 @@ export class BaseService {
    */
   getPaginatedResults<T>(pagination: Pagination, endpointName?: string): Observable<PaginationResponse<T>> {
     const parameters = pagination.getHttpParameters();
-    const url = endpointName !== '' && endpointName !== undefined && endpointName !== null ? `${this.baseUrl}/${endpointName}` : `${this.baseUrl}`
+    const url = endpointName !== '' && endpointName !== undefined && endpointName !== null
+      ? `${this.baseUrl}/${endpointName}`
+      : `${this.baseUrl}`;
+
     return this.httpClient.get<PaginationResponse<T>>(url, { params: parameters });
   }
 
@@ -61,8 +64,11 @@ export class BaseService {
    * @param {number|string} id - The unique identifier of the resource to delete.
    * @return {Observable<T>} An observable of the deleted resource or confirmation of deletion.
    */
-  delete<T>(endpointName: string= '', id: number | string):Observable<T> {
-    const url = endpointName !== '' ? `${this.baseUrl}/${endpointName}/${id}` : `${this.baseUrl}/${id}`
+  delete<T>(id: number | string, endpointName?: string):Observable<T> {
+    const url = (endpointName !== '' && endpointName !== null && endpointName !== undefined)
+      ? `${this.baseUrl}/${endpointName}/${id}`
+      : `${this.baseUrl}/${id}`;
+
     return this.httpClient.delete<T>(url).pipe(catchError(this.handleError));
   }
 
