@@ -3,7 +3,7 @@ import { MatListItem, MatNavList } from '@angular/material/list';
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgOptimizedImage } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'main-layout',
@@ -16,7 +16,8 @@ import { RouterLink, RouterOutlet } from '@angular/router';
     MatToolbar,
     NgOptimizedImage,
     RouterLink,
-    RouterOutlet
+    RouterOutlet,
+    RouterLinkActive
   ],
   templateUrl: './main-layout-component.html',
   styleUrl: './main-layout-component.css',

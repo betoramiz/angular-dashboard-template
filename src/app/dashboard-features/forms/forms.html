@@ -47,8 +47,8 @@
 
       <simple-form (onSubmit)="onSubmitVerboseForm($event)"></simple-form>
       <code>
-        @if (backendDto()) {
-          {{ backendDto() | json }}
+        @if (backendVerboseDto()) {
+          {{ backendVerboseDto() | json }}
         }
       </code>
     </section>

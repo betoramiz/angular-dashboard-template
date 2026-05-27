@@ -4,11 +4,15 @@ import { Component } from '@angular/core';
   selector: 'page-content',
   imports: [],
   template: `
-    <div class="m-4">
+    <div class="page-container">
       <ng-content></ng-content>
     </div>
   `,
-  styles: ``,
+  styles: `
+    .page-container {
+      margin: 12px 32px;
+    }
+  `,
 })
 export class PageContent {
 

@@ -32,10 +32,32 @@ html {
   @include mat.sidenav-overrides((
     container-width: 250px,
     container-shape: square,
+    container-background-color: var(--mat-sys-on-primary)
   ));
 
   header {
     background-color:  var(--mat-sys-on-secondary-container);
   }
+}
 
+@include mat.list-overrides((
+  active-indicator-color: var(--mat-sys-primary),
+  active-indicator-shape: 0,
+));
+
+@include mat.button-overrides((
+  filled-container-shape: 8px,
+  text-container-shape: 8px,
+));
+
+button.success {
+  @include mat.button-overrides((
+    filled-container-color: var(--mat-sys-on-secondary-container),
+  ));
+}
+
+button.secondary {
+  @include mat.button-overrides((
+    filled-container-color: var(--mat-sys-tertiary),
+  ));
 }

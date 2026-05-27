@@ -9,8 +9,8 @@ div.code {
   width: 50%;
 
   pre {
-    background-color: #282c34; /* Dark theme background */
-    color: #abb2bf; /* Light grey text */
+    background-color: var(--mat-sys-on-primary-container); /* Dark theme background */
+    color: var(--mat-sys-primary); /* Light grey text */
     /*padding: 15px;*/
     border-radius: 8px;
     overflow-x: auto; /* Adds scrollbar for long lines */

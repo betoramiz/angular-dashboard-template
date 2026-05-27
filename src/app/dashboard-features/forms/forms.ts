@@ -20,12 +20,13 @@ import { JsonPipe } from '@angular/common';
 export default class Forms {
 
   backendDto = signal<BackendDto|null>(null);
+  backendVerboseDto = signal<BackendDto|null>(null);
 
   protected onSubmitSimpleForm(data: FormValueType): void {
     this.backendDto.set(toBackendDto(data));
   }
 
   protected onSubmitVerboseForm(data: FormValueType): void {
-    this.backendDto.set(toBackendDto(data));
+    this.backendVerboseDto.set(toBackendDto(data));
   }
 }

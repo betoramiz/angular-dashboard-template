@@ -8,7 +8,13 @@
       </div>
     </header>
     <mat-nav-list>
-      <mat-list-item routerLink="simple-form">Simple Form</mat-list-item>
+      <a mat-list-item routerLink="forms" routerLinkActive #rla="routerLinkActive" [activated]="rla.isActive">Forms</a>
+    </mat-nav-list>
+    <mat-nav-list>
+      <a mat-list-item routerLink="buttons" routerLinkActive #rlButtons="routerLinkActive" [activated]="rlButtons.isActive">Butons</a>
+    </mat-nav-list>
+    <mat-nav-list>
+      <a mat-list-item routerLink="modals" routerLinkActive #rlModal="routerLinkActive" [activated]="rlModal.isActive">Modal</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
