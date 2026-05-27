@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ErrorModalComponent } from '@shared-component/error-modal-component';
-import { SimpleYesNoDialog } from '@shared-component/simple-yes-no-dialog';
 import { map, Observable } from 'rxjs';
-import { SimpleConfirmation } from '@shared-component/simple-confirmation';
+import { ConfirmationComponent } from '@shared/components/dialgos/confirmation-component';
+import { YesNoComponent } from '@shared/components/dialgos/yes-no-component';
+import { ErrorComponent } from '@shared/components/dialgos/error-component';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class ModalService {
   private readonly dialog = inject(MatDialog);
 
   simpleConfirmationDialog(title: string, detail: string): void {
-    this.dialog.open(SimpleConfirmation, {
+    this.dialog.open(ConfirmationComponent, {
       data: {
         title: title,
         body: detail
@@ -24,7 +24,7 @@ export class ModalService {
   }
 
   showErrorModal(detail: string): void {
-    this.dialog.open(ErrorModalComponent, {
+    this.dialog.open(ErrorComponent, {
       data: {
         title: 'Error al procesar la solicutud',
         body: detail
@@ -35,7 +35,7 @@ export class ModalService {
   }
 
   showSimpleYesNoModal(title: string, detail: string): Observable<boolean> {
-    const dialogRef = this.dialog.open(SimpleYesNoDialog, {
+    const dialogRef = this.dialog.open(YesNoComponent, {
       data: { title, body: detail },
       hasBackdrop: true, disableClose: true
     });
