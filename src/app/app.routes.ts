@@ -5,7 +5,8 @@ import AuthLayoutComponent from './layouts/auth-layout-component/auth-layout-com
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => MainLayoutComponent
+    loadComponent: () => MainLayoutComponent,
+    loadChildren: () => import('./dashboard-features/routes').then(m => m.routes),
   },
   {
     path: 'auth',

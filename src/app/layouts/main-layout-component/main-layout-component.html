@@ -8,12 +8,11 @@
       </div>
     </header>
     <mat-nav-list>
-      <mat-list-item>Buttons</mat-list-item>
+      <mat-list-item routerLink="simple-form">Simple Form</mat-list-item>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar>Angular Material - Components Customization</mat-toolbar>
-
-<!--    <some-form (onSubmitEvent)="onSubmitForm($event)"></some-form>-->
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
