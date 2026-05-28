@@ -1,52 +1,29 @@
-import { DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { FormService } from './form-service';
-import { catchError, Observable, switchMap, tap, throwError } from 'rxjs';
-import { ActionStatus } from '@shared/models/types';
+import { Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Observable, switchMap } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { BaseCrudFacade } from '@shared/services/base-crud-facade';
+import { FormService } from './form-service';
 
 @Injectable()
-export class FormFacade {
-  private readonly formService: FormService = inject(FormService);
-  private readonly destroyRef = inject(DestroyRef);
+export class FormFacade extends BaseCrudFacade {
+  protected readonly service = inject(FormService);
+  activeItems = signal<string[]>([]);
 
-  actionStatus = signal<ActionStatus>('idle');
-  errorMessage = signal<string>('');
+  getAllItems(): void {
+    this.runQuery(
+      this.service.getListOf<string>('list'),
+      (users) => this.activeItems.set(users)
+    );
+  }
 
-  items = signal<string[]>([]);
-
-  getAllItems(): Observable<string[]> {
-    this.actionStatus.set('loading');
-
-    return this.formService
-      .getListOf<string>('list')
+  createAndRefresh(body: string): void {
+    const creteItem$ = this.service.create<string, string>(body, 'test')
       .pipe(
-        tap(() => this.actionStatus.set('success')),
-        catchError(error => this.handleError(error))
+        switchMap(() => this.service.getListOf<string>('list'))
       );
-  }
 
-  createItem(): void {
-    this.actionStatus.set('loading');
-
-    this.formService
-      .create({name: 'test', email: ''})
-      .pipe(
-        switchMap(() => this.formService.getListOf<string>('list')),
-        tap(() => this.actionStatus.set('success')),
-        catchError(error => this.handleError(error)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
-
-  clearStatus(): void {
-    this.actionStatus.set('idle');
-    this.errorMessage.set('');
-  }
-
-  private handleError(error: any): Observable<never> {
-    this.actionStatus.set('error');
-    this.errorMessage.set(error.message);
-    return throwError(() => error);
+    this.runQuery(creteItem$, (users) => this.activeItems.set(users));
   }
 }
+

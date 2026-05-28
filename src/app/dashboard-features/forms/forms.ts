@@ -38,7 +38,7 @@ export default class Forms {
       if (status === 'error') {
         this.modalService.showErrorModal(this.errorMessage());
         this.formFacade.clearStatus();
-      } else {
+      } else if (status === 'success') {
         this.formFacade.clearStatus();
       }
     });
@@ -46,6 +46,8 @@ export default class Forms {
 
   protected onSubmitSimpleForm(data: FormValueType): void {
     this.backendDto.set(toBackendDto(data));
+
+    this.formFacade.createAndRefresh('test');
   }
 
   protected onSubmitVerboseForm(data: FormValueType): void {
