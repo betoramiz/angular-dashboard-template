@@ -29,8 +29,9 @@ src/app/dashboard-features/<feature-name>/
 ## Layer Rules
 
 1. View layer: components bind to signals and delegate actions. They should not perform HTTP calls or complex RxJS orchestration.
-2. Facade layer: feature-local controller that owns signals, status, error state, refresh flows, and internal subscriptions.
+2. Facade layer: feature-local controller extending `BaseCrudFacade` that inherits unified UI state signals (`actionStatus`, `errorMessage`) and uses query runners (`runQuery`) to orchestrate async pipelines and handle auto-unsubscription on destruction.
 3. Data REST layer: stateless service extending `BaseService`, returning typed observables.
+
 
 ## Naming and Imports
 

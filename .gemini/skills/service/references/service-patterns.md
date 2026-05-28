@@ -48,9 +48,12 @@ loadUsers() {
 
 ## 3. Extending Service URLs & Custom Endpoints
 
-### Quirks & Internal Typo of BaseService:
-1. **Base URL Getter**: Do not access the private member variable `baseUlr` (which has a spelling typo `Ulr`). Instead, always use the public/protected getter `this.baseUrl`.
-2. **Dynamic Endpoint Modification**: If you need to hit sub-endpoints, append them to `this.baseUrl` or pass the `endpointName` parameter to the inherited methods:
+### URL Construction Helpers (`BaseService`):
+1. **Base URL Getter**: The internal member is named `_baseUrl` (the old typo `baseUlr` is fully resolved). You can access the configured base URL via the protected getter `this.baseUrl`.
+2. **Safe URL Construction**: Instead of manual string manipulation or concatenation, use the inherited `buildUrl(endpointName?, id?)` helper. This method generates clean URLs, preventing double-slash issues or nullability bugs:
+   - `this.buildUrl('active')` -> `${this.baseUrl}/active`
+   - `this.buildUrl(undefined, id)` -> `${this.baseUrl}/${id}`
+   - `this.buildUrl(`${id}/status`)` -> `${this.baseUrl}/${id}/status`
 
 ```typescript
 import { Injectable } from '@angular/core';
@@ -71,9 +74,9 @@ export class UserService extends BaseService {
     return this.getListOf<User>('active');
   }
 
-  // Writing a completely custom HTTP request:
+  // Writing a completely custom HTTP request using buildUrl:
   updateUserStatus(id: string, active: boolean): Observable<void> {
-    const url = `${this.baseUrl}/${id}/status`;
+    const url = this.buildUrl(`${id}/status`);
     return this.httpClient.patch<void>(url, { active });
   }
 }
@@ -83,14 +86,16 @@ export class UserService extends BaseService {
 
 ## 4. RxJS Best Practices in Services
 
-- **Keep Subscriptions Out of Services**: Services should return `Observable<T>` streams. Never call `.subscribe()` inside the service itself unless you are doing local state buffering/caching. Let components subscribe to the returned Observables.
-- **Error Handling**: Standard REST errors are globally captured by the inherited `catchError(this.handleError)` handler in `BaseService`. If you write custom fetch methods, always add `catchError`:
+- **Keep Subscriptions Out of Services**: Services should return `Observable<T>` streams. Never call `.subscribe()` inside the service itself unless you are doing local state buffering/caching. Let facades or components subscribe to the returned Observables.
+- **Error Handling**: Standard REST errors are globally captured by the inherited `catchError(this.handleError)` handler in `BaseService`. If you write custom fetch/patch/post methods, always add `catchError(this.handleError)` to ensure error tracking and formatting:
 ```typescript
 import { catchError } from 'rxjs/operators';
 
 customCall() {
+  const url = this.buildUrl('custom');
   return this.httpClient.get(url).pipe(
     catchError(this.handleError) // Reuses standard error reporting
   );
 }
 ```
+

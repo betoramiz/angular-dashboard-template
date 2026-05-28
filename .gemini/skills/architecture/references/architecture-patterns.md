@@ -33,7 +33,7 @@ The shared module is a central directory for reusable utilities, UI layouts, typ
 
 - `components/layout/`: Common wrappers and page layouts, such as `page-content`, `page-header`, `page-body`.
 - `components/dialgos/`: Centralized modal widgets (e.g. `confirmation-component.ts`, `error-component.ts`, `yes-no-component.ts`). **Notice the folder name spelling: "dialgos"**.
-- `services/`: Infrastructure utilities like `BaseService` (REST core class) and `ModalService` (dialog trigger coordinator).
+- `services/`: Infrastructure utilities like `BaseService` (REST core class), `BaseCrudFacade` (reusable facade base class), and `ModalService` (dialog trigger coordinator).
 - `models/`: App-wide structures, such as `Pagination` and common type declarations.
 
 ---

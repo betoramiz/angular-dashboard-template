@@ -1,6 +1,6 @@
 ---
 name: angular-service
-description: Build or refactor Angular services for this project. Use when creating Injectable services, REST API wrappers, BaseService subclasses, custom HTTP endpoints, RxJS-returning service methods, or shared service infrastructure in modern Angular v19+ or v21+.
+description: Build or refactor Angular services for this project. Use when creating Injectable services, REST API wrappers, BaseService subclasses, custom HTTP endpoints, RxJS-returning service methods, or shared service infrastructure.
 ---
 
 # Angular Services
@@ -13,8 +13,8 @@ Services are stateless data or infrastructure wrappers. Keep subscriptions out o
 - Use functional `inject()` for dependencies.
 - Return `Observable<T>` from service methods; let facades or components subscribe.
 - Any REST service should extend `BaseService` from `@shared/services/base-service`.
-- Configure the endpoint with `super('<endpoint>')`.
-- Use `this.baseUrl` for custom URLs; do not access the internal `baseUlr` typo directly.
+- Configure the endpoint by calling `super('<endpoint>')` in the constructor.
+- Use `this.buildUrl(endpointName?, id?)` to construct consistent sub-endpoints and API paths instead of manually concatenating paths.
 - Add `catchError(this.handleError)` for custom HTTP calls that bypass inherited CRUD helpers.
 
 ```typescript
@@ -32,12 +32,15 @@ export class UserService extends BaseService {
   }
 
   getActiveUsers(): Observable<UserDto[]> {
+    // Hits: ${this.baseUrl}/active
     return this.getListOf<UserDto>('active');
   }
 
   updateStatus(id: string, active: boolean): Observable<void> {
+    // Hits: ${this.baseUrl}/${id}/status
+    const url = this.buildUrl(`${id}/status`);
     return this.httpClient
-      .patch<void>(`${this.baseUrl}/${id}/status`, { active })
+      .patch<void>(url, { active })
       .pipe(catchError(this.handleError));
   }
 }
@@ -49,3 +52,4 @@ export class UserService extends BaseService {
 - Feature-specific REST services live under `src/app/dashboard-features/<feature>/`.
 
 Read [references/service-patterns.md](references/service-patterns.md) when adding custom endpoints, extending `BaseService`, or deciding whether logic belongs in a service or facade.
+

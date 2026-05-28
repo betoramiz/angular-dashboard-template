@@ -18,7 +18,7 @@ A **Facade** serves as the intermediate layer between UI components and backend 
 
 ### Key Differences:
 - **Feature Service**: Extends `BaseService`, is declared global with `providedIn: 'root'`, handles direct HTTP requests, and returns raw Observables.
-- **Service Facade**: Is provided at the Component level, orchestrates business logic pipelines, manages reactive state signals (`actionStatus`, `errorMessage`, data signals), and subscribes internally using clean lifecycle destruction.
+- **Service Facade**: Extends `BaseCrudFacade`, is provided at the Component level, orchestrates business logic pipelines, inherits common reactive state signals (`actionStatus`, `errorMessage`), manages feature-specific data signals, and runs operations safely through `runQuery`.
 
 ---
 
@@ -27,72 +27,48 @@ A **Facade** serves as the intermediate layer between UI components and backend 
 Below is the established blueprint pattern for a modern state-managing feature Facade:
 
 ```typescript
-import { DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, Observable, switchMap, tap, throwError } from 'rxjs';
-import { ActionStatus } from '@shared/models/types';
+import { inject, Injectable, signal } from '@angular/core';
+import { BaseCrudFacade } from '@shared/services/base-crud-facade';
 import { FormService } from './form-service';
+import { switchMap } from 'rxjs';
 
 @Injectable()
-export class FormFacade {
-  // 1. Dependencies resolved via property inject()
-  private readonly formService = inject(FormService);
-  private readonly destroyRef = inject(DestroyRef);
+export class FormFacade extends BaseCrudFacade {
+  // 1. Dependency injection and service mapping
+  protected readonly service = inject(FormService);
 
-  // 2. Reactive UI State Signals
-  actionStatus = signal<ActionStatus>('idle');
-  errorMessage = signal<string>('');
+  // 2. Feature-specific data state
   items = signal<string[]>([]);
 
-  // 3. Routable Stream Method (letting component subscribe)
-  getAllItems(): Observable<string[]> {
-    this.actionStatus.set('loading');
-
-    return this.formService
-      .getListOf<string>('list')
-      .pipe(
-        tap((data) => {
-          this.items.set(data);
-          this.actionStatus.set('success');
-        }),
-        catchError(error => this.handleError(error))
-      );
+  // 3. Simple Query Execution using runQuery
+  getAllItems(): void {
+    this.runQuery(
+      this.service.getListOf<string>('list'),
+      (data) => this.items.set(data)
+    );
   }
 
-  // 4. Fire-and-Forget Internal Subscription Method
+  // 4. Command pipeline orchestration with automatic state handling
   createItem(name: string, email: string): void {
-    this.actionStatus.set('loading');
-
-    this.formService
-      .create({ name, email })
+    const pipeline$ = this.service
+      .create<{ name: string; email: string }, any>({ name, email })
       .pipe(
         // SwitchMap to automatically fetch refreshed data
-        switchMap(() => this.formService.getListOf<string>('list')),
-        tap((data) => {
-          this.items.set(data);
-          this.actionStatus.set('success');
-        }),
-        catchError(error => this.handleError(error)),
-        // Crucial: Automatically unsubscribes on component destruction
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
-  }
+        switchMap(() => this.service.getListOf<string>('list'))
+      );
 
-  // 5. Utility State Reset Methods
-  clearStatus(): void {
-    this.actionStatus.set('idle');
-    this.errorMessage.set('');
-  }
-
-  // 6. Centralized Internal Error Handler
-  private handleError(error: any): Observable<never> {
-    this.actionStatus.set('error');
-    this.errorMessage.set(error.message || 'An error occurred');
-    return throwError(() => error);
+    this.runQuery(
+      pipeline$,
+      (data) => this.items.set(data)
+    );
   }
 }
 ```
+
+### Key Advantages of `BaseCrudFacade`:
+1. **Inherited Signals**: `actionStatus` and `errorMessage` are inherited automatically and exposed as read-only or writable (depending on component requirements).
+2. **Subscription Management**: `runQuery` internally handles subscription and uses `takeUntilDestroyed` with the facade's `DestroyRef` to prevent memory leaks.
+3. **Consistent State Transitions**: The `setLoading()`, `setSuccess()`, and `handleError()` steps are executed automatically, keeping the UI state synchronized with the REST call lifecycle.
 
 ---
 
@@ -101,11 +77,12 @@ export class FormFacade {
 When using the Facade inside a Component:
 1. Include the Facade in the component's `providers` array.
 2. Inject it using `inject()`.
-3. Bind template directly to facade state signals.
+3. Bind the template or effects directly to the facade's state and data signals.
 
 ```typescript
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormFacade } from './form-facade';
+import { ModalService } from '@shared/services/modal-service';
 
 @Component({
   selector: 'app-forms-page',
@@ -120,13 +97,31 @@ import { FormFacade } from './form-facade';
     }
 
     <button (click)="facade.createItem('Alice', 'alice@email.com')">Add User</button>
+
+    <ul>
+      @for (item of facade.items(); track item) {
+        <li>{{ item }}</li>
+      }
+    </ul>
   `
 })
 export default class FormsPage implements OnInit {
   protected readonly facade = inject(FormFacade);
+  private readonly modalService = inject(ModalService);
+
+  constructor() {
+    // Standard effect for global/modal notifications on errors
+    effect(() => {
+      if (this.facade.actionStatus() === 'error') {
+        this.modalService.showErrorModal(this.facade.errorMessage());
+        this.facade.clearStatus(); // Clean up state after displaying
+      }
+    });
+  }
 
   ngOnInit() {
-    this.facade.getAllItems().subscribe();
+    this.facade.getAllItems();
   }
 }
 ```
+
