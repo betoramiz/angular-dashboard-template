@@ -1,0 +1,23 @@
+<form [formGroup]="formGroup" (ngSubmit)="onSave()" class="flex flex-col w-1/2">
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" type="text" placeholder="Name">
+    @if(formGroup.controls.name.invalid && formGroup.controls.name.touched){
+      <mat-error>Name is required</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" type="email" placeholder="Email">
+    @if(formGroup.controls.email.hasError('required') && formGroup.controls.email.touched){
+      <mat-error>Email is required</mat-error>
+    }
+    @if(formGroup.controls.email.hasError('email') && formGroup.controls.email.touched){
+      <mat-error>Wrong format</mat-error>
+    }
+  </mat-form-field>
+  <div class="flex justify-end gap-3">
+    <button matButton="text" type="button" (click)="onCancel()">Cancel</button>
+    <button matButton="filled" class="success" type="submit" [disabled]="formGroup.invalid">Add</button>
+  </div>
+</form>
