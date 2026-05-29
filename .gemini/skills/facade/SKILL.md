@@ -14,6 +14,7 @@ Facades are feature-local state controllers between components and REST services
 - Provide the facade in the owning component's `providers` array.
 - Inject the feature service and assign it to the required `protected readonly service` property.
 - Use `this.runQuery(observable$, (data) => ...)` to execute query and command pipelines. This automatically sets `actionStatus` ('loading', 'success', 'error'), handles error propagation, and cleans up subscriptions using `takeUntilDestroyed`.
+- If using inherited `create`, `update`, or `delete` methods directly, return the observable to the caller and ensure the caller owns subscription cleanup.
 - Use signals for additional feature-specific UI state such as lists, selected items, filters, and pagination.
 - Keep service classes stateless and let the facade coordinate multi-step flows.
 
@@ -55,4 +56,3 @@ export class UserFacade extends BaseCrudFacade {
 ```
 
 Read [references/facade-patterns.md](references/facade-patterns.md) for full facade/component integration and RxJS orchestration examples.
-

@@ -70,6 +70,8 @@ export class FormFacade extends BaseCrudFacade {
 2. **Subscription Management**: `runQuery` internally handles subscription and uses `takeUntilDestroyed` with the facade's `DestroyRef` to prevent memory leaks.
 3. **Consistent State Transitions**: The `setLoading()`, `setSuccess()`, and `handleError()` steps are executed automatically, keeping the UI state synchronized with the REST call lifecycle.
 
+Inherited `create`, `update`, and `delete` return observables instead of subscribing internally. If a component or facade uses those methods directly, the caller must subscribe with an Angular-safe cleanup strategy such as `takeUntilDestroyed`.
+
 ---
 
 ## 3. Component Integration Pattern
@@ -125,3 +127,20 @@ export default class FormsPage implements OnInit {
 }
 ```
 
+---
+
+## 4. Anti-Patterns
+
+- Do not add `providedIn: 'root'` to feature facades.
+- Do not subscribe in components when the facade can expose a `runQuery` method instead.
+- Do not duplicate loading/error signals in feature facades unless the feature has multiple independent async regions.
+- Do not put URL construction or raw `HttpClient` calls in facades.
+- Do not leave subscriptions from returned CRUD observables without cleanup.
+
+## 5. Final Checklist
+
+- Facade is provided by the owning component.
+- Facade extends `BaseCrudFacade` and assigns `protected readonly service`.
+- Async pipelines use `runQuery` when the facade owns the subscription.
+- Feature data lives in signals.
+- Components bind to facade signals and delegate actions to facade methods.

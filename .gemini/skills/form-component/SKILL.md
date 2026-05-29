@@ -15,8 +15,11 @@ Use typed reactive forms with `NonNullableFormBuilder`. Keep form UI components 
 - Use `output<T>()` for submit/cancel events.
 - Use `getRawValue()` for non-nullable typed values.
 - Check `touched` or `dirty` before showing validation errors.
+- Render `mat-error` messages for specific validation keys such as `required`, `email`, `minlength`, or domain validators.
+- Add appropriate input attributes such as `type`, `autocomplete`, `min`, `max`, and `aria-describedby` when they improve browser and assistive behavior.
 - Set `type="button"` on cancel buttons and `type="submit"` on save buttons.
 - Put explicit form value/control types in `models/` for large or shared forms.
+- For edit forms, initialize from a typed value and prefer `patchValue` only when the incoming object is intentionally partial.
 
 ```typescript
 import { Component, inject, output } from '@angular/core';

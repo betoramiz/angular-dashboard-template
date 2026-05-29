@@ -30,10 +30,10 @@ src/app/dashboard-features/forms/
 
 ## 2. CRUD Operations with `BaseService`
 
-When extending `BaseService`, the service inherits standard asynchronous HTTP methods. You can call these directly from components or inside custom methods:
+When extending `BaseService`, the service inherits standard asynchronous HTTP methods. Prefer calling these from facades; components should only subscribe directly for very small local-only flows.
 
 ```typescript
-// Inside a component
+// Inside a facade
 private readonly userService = inject(FormService);
 
 loadUsers() {
@@ -49,7 +49,7 @@ loadUsers() {
 ## 3. Extending Service URLs & Custom Endpoints
 
 ### URL Construction Helpers (`BaseService`):
-1. **Base URL Getter**: The internal member is named `_baseUrl` (the old typo `baseUlr` is fully resolved). You can access the configured base URL via the protected getter `this.baseUrl`.
+1. **Base URL Getter**: The internal member is named `_baseUrl`. You can access the configured base URL via the protected getter `this.baseUrl`.
 2. **Safe URL Construction**: Instead of manual string manipulation or concatenation, use the inherited `buildUrl(endpointName?, id?)` helper. This method generates clean URLs, preventing double-slash issues or nullability bugs:
    - `this.buildUrl('active')` -> `${this.baseUrl}/active`
    - `this.buildUrl(undefined, id)` -> `${this.baseUrl}/${id}`
@@ -99,3 +99,20 @@ customCall() {
 }
 ```
 
+---
+
+## 5. Anti-Patterns
+
+- Do not call `.subscribe()` inside feature REST services.
+- Do not store feature UI state in REST services.
+- Do not concatenate API URLs manually when `buildUrl()` can express the endpoint.
+- Do not bypass inherited CRUD helpers unless the endpoint shape requires a custom request.
+- Do not swallow errors in services; return the failed observable through `catchError(this.handleError)`.
+
+## 6. Final Checklist
+
+- Service extends `BaseService` when it performs HTTP calls.
+- Service is decorated with `@Injectable({ providedIn: 'root' })`.
+- Constructor calls `super('<endpoint>')`.
+- Public methods return typed `Observable<T>` values.
+- Custom HTTP calls use `buildUrl()` and `catchError(this.handleError)`.
