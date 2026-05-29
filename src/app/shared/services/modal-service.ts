@@ -1,9 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
-import { ConfirmationComponent } from '@shared/components/dialgos/confirmation-component';
-import { YesNoComponent } from '@shared/components/dialgos/yes-no-component';
-import { ErrorComponent } from '@shared/components/dialgos/error-component';
+import { ConfirmationComponent, ErrorComponent, YesNoComponent } from '@shared/components/dialgos';
 
 @Injectable({
   providedIn: 'root',
